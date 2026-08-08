@@ -1,0 +1,49 @@
+{
+    "name": "lcoy/cipher",
+    "description": "Password-gated [protected] BBCode with real-time unlock for Flarum.",
+    "type": "flarum-extension",
+    "keywords": [
+        "flarum",
+        "bbcode",
+        "password",
+        "protected",
+        "unlock",
+        "gate"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lcoy",
+            "email": "1498127009@qq.com"
+        }
+    ],
+    "support": {
+        "source": "https://gitee.com/lcoy/Flarum_Cipher"
+    },
+    "require": {
+        "flarum/core": "^2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lcoy\\Cipher\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Cipher",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-lock",
+                "backgroundColor": "#2f6fed",
+                "color": "#fff"
+            }
+        },
+        "flarum-cli": {
+            "modules": {
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
