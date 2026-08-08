@@ -1,0 +1,15 @@
+# PHP
+/vendor/
+composer.lock
+
+# Node.js
+node_modules/
+
+# Frontend build output — keep the source, let the project build its own dist.
+js/dist/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
