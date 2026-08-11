@@ -1,0 +1,335 @@
+.Cipher-box {
+  margin: 0.5rem 0;
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.Cipher-box-locked {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  background: var(--control-bg);
+  color: var(--muted-more-color);
+  // Keep content above the shimmer/border layers.
+  isolation: isolate;
+  // Breathing inner glow: inset so the parent's overflow:hidden can't clip it.
+  animation: CipherLockedGlow 3.5s ease-in-out infinite;
+
+  // Flowing "Rhine" shimmer: a diagonal highlight band sweeps across the
+  // locked card to draw the eye and signal that the content is pending,
+  // not gone. Pointer-events:none so it never blocks the unlock button.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 38%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 62%,
+      transparent 100%
+    );
+    background-size: 250% 100%;
+    background-position: 150% 0;
+    animation: CipherRhineFlow 3.2s linear infinite;
+    mix-blend-mode: overlay;
+  }
+
+  .Cipher-box-icon {
+    font-size: 2rem;
+    opacity: 0.7;
+    // Gentle float so the lock feels like it's "holding" the content.
+    animation: CipherLockBob 3.5s ease-in-out infinite;
+  }
+
+  .Cipher-box-text {
+    font-weight: 600;
+  }
+
+  .Cipher-unlock-button {
+    min-width: 8rem;
+  }
+}
+
+.Cipher-box-reqs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.Cipher-box-req {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--border-radius);
+  background: var(--body-bg);
+  color: var(--text-color);
+  font-size: 0.85rem;
+  text-align: left;
+
+  > i {
+    flex: none;
+    font-size: 0.7rem;
+    color: var(--muted-color);
+  }
+
+  &--time {
+    color: var(--muted-color);
+
+    > i {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.Cipher-req-icon--met {
+  color: var(--success-color, var(--control-success-color, #2ecc71)) !important;
+}
+
+.Cipher-req-icon--unmet {
+  color: var(--danger-color, var(--error-color, #e74c3c)) !important;
+}
+
+.Cipher-box-content {
+  padding: 0.75rem 1rem;
+  animation: CipherFadeIn 0.3s ease;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.CipherUnlockModal-error {
+  margin-bottom: 1rem;
+  color: var(--danger-color);
+}
+
+// Submit button: centered with a comfortable width instead of the full-width
+// block style, so it doesn't dominate the small modal.
+.CipherUnlockModal-submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+
+  .Button {
+    min-width: 10rem;
+  }
+}
+
+.CipherUnlockModal-reqs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+  background: var(--control-bg);
+
+  .CipherUnlockModal-req {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--muted-color);
+
+    > i {
+      flex: none;
+      font-size: 0.65rem;
+      color: var(--primary-color);
+    }
+
+    &--met > i {
+      color: var(--success-color, var(--control-success-color, #2ecc71));
+    }
+
+    &--unmet > i {
+      color: var(--danger-color, var(--error-color, #e74c3c));
+    }
+  }
+}
+
+@keyframes CipherFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// "Rhine" shimmer: a diagonal highlight sweeps across the locked card.
+// 250% background-size + position sweep from 150% → -150% makes the band
+// enter from the right and exit on the left, looping seamlessly.
+@keyframes CipherRhineFlow {
+  0% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -150% 0;
+  }
+}
+
+// Breathing inner glow: an inset primary-tinted halo pulses softly. Kept
+// inset on purpose so the parent .Cipher-box { overflow: hidden } can't
+// clip it, and so it never flashes full-brightness.
+@keyframes CipherLockedGlow {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+  }
+  50% {
+    box-shadow: inset 0 0 0 1px var(--primary-color),
+      inset 0 0 18px -6px var(--primary-color);
+  }
+}
+
+// Subtle vertical bob for the lock icon, synced with the glow cycle.
+@keyframes CipherLockBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+// Respect users who prefer reduced motion: disable the shimmer/bob/glow
+// loops but keep the static locked appearance intact.
+@media (prefers-reduced-motion: reduce) {
+  .Cipher-box-locked,
+  .Cipher-box-locked .Cipher-box-icon,
+  .Cipher-box-locked::before {
+    animation: none;
+  }
+
+  .Cipher-box-locked::before {
+    background-position: 50% 0;
+  }
+}
+
+// Visual insert/edit modal
+.CipherInsertModal {
+  // The default .Form-group is a column flex with flex-start alignment, which
+  // prevents our rows from stretching — force them to fill the modal width.
+  .Form-group {
+    width: 100%;
+  }
+
+  .Cipher-insert-conditions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+
+    // Make each condition look like a clickable chip: bordered, hovered and
+    // clearly toggled, so users know the ✓/✗ is interactive.
+    .Checkbox {
+      margin: 0;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid var(--control-bg);
+      border-radius: var(--border-radius);
+      background: var(--body-bg);
+      color: var(--muted-color);
+      cursor: pointer;
+      user-select: none;
+      text-align: center;
+      transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+
+      .Checkbox-display {
+        font-size: 0.8rem;
+      }
+
+      &:hover {
+        border-color: var(--primary-color);
+        color: var(--text-color);
+      }
+
+      &.on {
+        border-color: var(--primary-color);
+        background: var(--control-bg);
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  // Two/three column rows (label · field · quick-time) aligned on one line.
+  // Grid guarantees the columns share the exact same start/end edges.
+  .Cipher-insert-row {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.5rem 0;
+
+    // Time visibility: label + quick-time preset on the first line...
+    &--time {
+      grid-template-columns: 7rem 1fr;
+      margin-bottom: 0.25rem;
+    }
+
+    // ...and the datetime-local picker on its own full-width line, so it
+    // never shares its width with the label or the quick-time select (which
+    // squeezed it to ~100px in the small modal).
+    &--time-field {
+      grid-template-columns: 1fr;
+      margin-top: 0;
+    }
+
+    .Cipher-insert-row-label {
+      font-weight: 600;
+    }
+
+    .FormControl {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .Select {
+      min-width: 0;
+    }
+  }
+
+  // Phone: the modal is close to full-screen, so keep the condition chips in
+  // two columns but stack every label/field row — a fixed 7rem label column
+  // would squeeze the controls on a narrow screen.
+  @media (max-width: 767px) {
+    .Cipher-insert-conditions {
+      gap: 0.4rem;
+
+      .Checkbox {
+        padding: 0.45rem 0.35rem;
+
+        .Checkbox-display {
+          font-size: 0.78rem;
+        }
+      }
+    }
+
+    .Cipher-insert-row {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+  }
+}
