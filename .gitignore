@@ -1,0 +1,18 @@
+# PHP
+/vendor/
+composer.lock
+
+# Node.js
+node_modules/
+
+# Keep dist in git: Flarum loads js/dist/forum.js and js/dist/admin.js
+# directly through extend.php after a plain `composer require`. Build tooling
+# isn't required downstream, so the compiled artefacts must ship with each
+# release. Source-maps can stay out since they're only needed for debugging.
+js/dist/*.map
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
