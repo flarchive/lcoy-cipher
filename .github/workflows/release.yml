@@ -1,0 +1,36 @@
+name: auto-release
+
+on:
+  push:
+    tags:
+      - 'v*'          # 匹配所有 v 开头的 tag
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 允许创建 Release
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      # （可选）构建步骤
+      # - name: 编译打包
+      #   run: |
+      #     npm install
+      #     npm run build
+      #     zip -r dist.zip ./dist
+
+      - name: 创建 GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: 发布 ${{ github.ref_name }}
+          body: |
+            本次自动发布基于 Tag: ${{ github.ref_name }}
+            请查看 Release 页面获取更新内容。
+          # files: |               # 如需上传附件，取消注释
+          #   dist.zip
+          #   README.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
